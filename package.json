@@ -24,7 +24,7 @@
     "@iobroker/adapter-core": "^3.3.2",
     "@iobroker/plugin-docker": "^0.0.15",
     "axios": "^1.12.2",
-    "dockerode": "^4.0.8",
+    "dockerode": "^4.0.9",
     "range_check": "^4.1.0"
   },
   "devDependencies": {
