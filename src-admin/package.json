@@ -3,7 +3,7 @@
     "version": "0.1.2",
     "private": true,
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "^4.52.2"
+        "@rollup/rollup-linux-x64-gnu": "^4.52.4"
     },
     "dependencies": {
         "@foxriver76/iob-component-lib": "^0.2.0",
