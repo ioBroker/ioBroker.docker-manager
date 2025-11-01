@@ -10,7 +10,7 @@
         "@iobroker/adapter-react-v5": "^7.7.3",
         "@iobroker/type-detector": "^4.5.1",
         "@iobroker/plugin-docker": "^0.1.5",
-        "@types/react-dom": "^18.3.7",
+        "@types/react-dom": "^19.2.2",
         "@vitejs/plugin-react": "^5.0.4",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
