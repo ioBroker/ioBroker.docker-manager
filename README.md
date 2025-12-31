@@ -113,4 +113,4 @@ The adapter could use the Docker API to communicate with the Docker daemon on ot
 
 The MIT License (MIT)
 
-Copyright (c) 2025 bluefox <dogafox@gmail.com>
+Copyright (c) 2025-2026 bluefox <dogafox@gmail.com>
