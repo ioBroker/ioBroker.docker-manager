@@ -44,17 +44,17 @@
       "zh-cn": "Docker 管理器"
     },
     "desc": {
-      "en": "Controlling and simulation of docker-manager devices",
-      "de": "Steuerung und Simulation von Matter-Geräten",
-      "ru": "Контроль и моделирование Matter-устройств",
-      "pt": "Controle e simulação de Matter-dispositivos",
-      "nl": "Controleren en simulatie van Matter-apparaten",
-      "fr": "Contrôle et simulation des Matter-dispositifs",
-      "it": "Controllo e simulazione di Matter-dispositivi",
-      "es": "Control y simulación de Matter-dispositivos",
-      "pl": "Kontrola i symulacja Matter-urządzeń",
-      "uk": "Контроль та імітація Matter-пристроїв",
-      "zh-cn": "控制和模拟事故装置"
+      "en": "Pull, delete, start, stop and manage Docker containers directly from ioBroker",
+      "de": "Ziehen, löschen, starten, stoppen und verwalten Sie Docker-Container direkt von ioBroker aus",
+      "ru": "Извлечение, удаление, запуск, остановка и управление контейнерами Docker напрямую из ioBroker",
+      "pt": "Extrair, excluir, iniciar, parar e gerenciar contêineres Docker diretamente do ioBroker",
+      "nl": "Docker-containers rechtstreeks vanuit ioBroker ophalen, verwijderen, starten, stoppen en beheren",
+      "fr": "Tirez, supprimez, démarrez, arrêtez et gérez les conteneurs Docker directement depuis ioBroker",
+      "it": "Tirare, eliminare, avviare, arrestare e gestire i contenitori Docker direttamente da ioBroker",
+      "es": "Extraer, eliminar, iniciar, detener y administrar contenedores Docker directamente desde ioBroker",
+      "pl": "Pobieraj, usuwaj, uruchamiaj, zatrzymuj i zarządzaj kontenerami Docker bezpośrednio z ioBroker",
+      "uk": "Витягування, видалення, запуск, зупинка та керування контейнерами Docker безпосередньо з ioBroker",
+      "zh-cn": "直接从 ioBroker 拉取、删除、启动、停止和管理 Docker 容器"
     },
     "authors": [
       "Denis Haev <dogafox@gmail.com>"
