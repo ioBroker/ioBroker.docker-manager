@@ -1,6 +1,6 @@
 {
     "name": "iobroker.docker-manager",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "private": true,
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "^4.55.1"

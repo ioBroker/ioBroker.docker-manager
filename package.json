@@ -1,79 +1,79 @@
 {
-    "name": "iobroker.docker-manager",
-    "version": "0.1.3",
-    "description": "Pull, delete, start, stop and manage Docker containers directly from ioBroker",
-    "author": {
-        "name": "Denis Haev",
-        "email": "dogafox@gmail.com"
-    },
-    "contributors": [],
-    "homepage": "https://github.com/ioBroker/ioBroker.docker-manager",
-    "keywords": [
-        "ioBroker",
-        "docker",
-        "manager"
-    ],
-    "engines": {
-        "node": ">=20"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ioBroker/ioBroker.docker-manager"
-    },
-    "dependencies": {
-        "@iobroker/adapter-core": "^3.3.2",
-        "@iobroker/plugin-docker": "^0.1.7",
-        "axios": "^1.13.2",
-        "dockerode": "^4.0.9",
-        "range_check": "^4.1.0"
-    },
-    "devDependencies": {
-        "@alcalzone/release-script": "^5.0.0",
-        "@alcalzone/release-script-plugin-iobroker": "^4.0.0",
-        "@alcalzone/release-script-plugin-license": "^4.0.0",
-        "@iobroker/build-tools": "^2.0.15",
-        "@iobroker/eslint-config": "^2.2.0",
-        "@iobroker/legacy-testing": "^2.0.2",
-        "@iobroker/testing": "^5.2.2",
-        "@iobroker/types": "^7.1.0",
-        "@types/dockerode": "^3.3.47",
-        "@types/node": "^25.0.3",
-        "@types/tar-fs": "^2.0.4",
-        "typescript": "~5.9.3"
-    },
-    "bugs": {
-        "url": "https://github.com/ioBroker/ioBroker.docker-manager/issues"
-    },
-    "main": "build/main.js",
-    "files": [
-        "admin/",
-        "io-package.json",
-        "LICENSE",
-        "build/"
-    ],
-    "scripts": {
-        "test:integration": "mocha --exit",
-        "test:package": "mocha test/package.test.js --exit",
-        "test": "npm run test:integration",
-        "prepublishOnly": "npm run build",
-        "npm": "npm i && cd src-admin && npm i",
-        "lint": "eslint -c eslint.config.mjs",
-        "lint-frontend": "cd src-admin && eslint -c eslint.config.mjs",
-        "build": "npm run build:ts && npm run build:gui",
-        "build:gui": "node tasks.js --build",
-        "build:ts": "tsc -p tsconfig.build.json && node tasks.js --copy-i18n",
-        "build:pack": "npm run build:ts && npm pack",
-        "release": "release-script",
-        "release-patch": "release-script patch --yes",
-        "release-minor": "release-script minor --yes",
-        "release-major": "release-script major --yes",
-        "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade",
-        "0-clean": "node tasks.js --0-clean",
-        "1-npm": "node tasks.js --1-npm",
-        "2-build": "node tasks.js --2-build",
-        "3-copy": "node tasks.js --3-copy",
-        "4-patch": "node tasks.js --4-patch"
-    },
-    "license": "MIT",
-    "readmeFilename": "README.md"
+  "name": "iobroker.docker-manager",
+  "version": "0.1.4",
+  "description": "Pull, delete, start, stop and manage Docker containers directly from ioBroker",
+  "author": {
+    "name": "Denis Haev",
+    "email": "dogafox@gmail.com"
+  },
+  "contributors": [],
+  "homepage": "https://github.com/ioBroker/ioBroker.docker-manager",
+  "keywords": [
+    "ioBroker",
+    "docker",
+    "manager"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioBroker/ioBroker.docker-manager"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^3.3.2",
+    "@iobroker/plugin-docker": "^0.1.7",
+    "axios": "^1.13.2",
+    "dockerode": "^4.0.9",
+    "range_check": "^4.1.0"
+  },
+  "devDependencies": {
+    "@alcalzone/release-script": "^5.0.0",
+    "@alcalzone/release-script-plugin-iobroker": "^4.0.0",
+    "@alcalzone/release-script-plugin-license": "^4.0.0",
+    "@iobroker/build-tools": "^2.0.15",
+    "@iobroker/eslint-config": "^2.2.0",
+    "@iobroker/legacy-testing": "^2.0.2",
+    "@iobroker/testing": "^5.2.2",
+    "@iobroker/types": "^7.1.0",
+    "@types/dockerode": "^3.3.47",
+    "@types/node": "^25.0.3",
+    "@types/tar-fs": "^2.0.4",
+    "typescript": "~5.9.3"
+  },
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.docker-manager/issues"
+  },
+  "main": "build/main.js",
+  "files": [
+    "admin/",
+    "io-package.json",
+    "LICENSE",
+    "build/"
+  ],
+  "scripts": {
+    "test:integration": "mocha --exit",
+    "test:package": "mocha test/package.test.js --exit",
+    "test": "npm run test:integration",
+    "prepublishOnly": "npm run build",
+    "npm": "npm i && cd src-admin && npm i",
+    "lint": "eslint -c eslint.config.mjs",
+    "lint-frontend": "cd src-admin && eslint -c eslint.config.mjs",
+    "build": "npm run build:ts && npm run build:gui",
+    "build:gui": "node tasks.js --build",
+    "build:ts": "tsc -p tsconfig.build.json && node tasks.js --copy-i18n",
+    "build:pack": "npm run build:ts && npm pack",
+    "release": "release-script",
+    "release-patch": "release-script patch --yes",
+    "release-minor": "release-script minor --yes",
+    "release-major": "release-script major --yes",
+    "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade",
+    "0-clean": "node tasks.js --0-clean",
+    "1-npm": "node tasks.js --1-npm",
+    "2-build": "node tasks.js --2-build",
+    "3-copy": "node tasks.js --3-copy",
+    "4-patch": "node tasks.js --4-patch"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md"
 }
