@@ -12,7 +12,7 @@
         "@iobroker/plugin-docker": "^0.1.7",
         "@types/react-dom": "^18.3.7",
         "@vitejs/plugin-react": "^5.1.2",
-        "react": "^18.3.1",
+        "react": "^19.2.3",
         "react-dom": "^18.3.1"
     },
     "scripts": {
