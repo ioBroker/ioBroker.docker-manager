@@ -361,7 +361,9 @@ export default class VolumeBrowser extends Component<VolumeBrowserProps, VolumeB
                         variant="outlined"
                         onClick={() => {
                             if (this.state.fileContent) {
-                                navigator.clipboard.writeText(this.state.fileContent);
+                                navigator.clipboard
+                                    .writeText(this.state.fileContent)
+                                    .catch(error => console.error(error));
                             }
                         }}
                     >
