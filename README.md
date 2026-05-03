@@ -113,6 +113,8 @@ The adapter could use the Docker API to communicate with the Docker daemon on ot
 
 - (@GermanBluefox) Initial commit
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 The MIT License (MIT)
