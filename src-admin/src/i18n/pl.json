@@ -142,5 +142,7 @@
   "removing": "usuwanie",
   "restarting": "ponowne uruchomienie",
   "running": "działanie",
-  "volume_explanation": "Wolumin w Dockerze to trwała pamięć masowa zarządzana przez Dockera, niezależna od kontenerów. Zapewnia bezpieczeństwo danych podczas usuwania lub ponownego tworzenia kontenerów i jest zalecanym sposobem przechowywania danych aplikacji."
+  "volume_explanation": "Wolumin w Dockerze to trwała pamięć masowa zarządzana przez Dockera, niezależna od kontenerów. Zapewnia bezpieczeństwo danych podczas usuwania lub ponownego tworzenia kontenerów i jest zalecanym sposobem przechowywania danych aplikacji.",
+  "Open terminal": "Open terminal",
+  "Terminal": "Terminal"
 }

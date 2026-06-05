@@ -142,5 +142,7 @@
   "removing": "removendo",
   "restarting": "reiniciando",
   "running": "correndo",
-  "volume_explanation": "Um volume no Docker é um armazenamento persistente gerenciado pelo Docker, independente de contêineres.\nEle mantém os dados seguros quando os contêineres são removidos ou recriados e é a maneira recomendada de armazenar dados de aplicativos."
+  "volume_explanation": "Um volume no Docker é um armazenamento persistente gerenciado pelo Docker, independente de contêineres.\nEle mantém os dados seguros quando os contêineres são removidos ou recriados e é a maneira recomendada de armazenar dados de aplicativos.",
+  "Open terminal": "Open terminal",
+  "Terminal": "Terminal"
 }

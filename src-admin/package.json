@@ -12,6 +12,10 @@
         "@iobroker/plugin-docker": "^0.1.7",
         "@types/react-dom": "^18.3.7",
         "@vitejs/plugin-react": "^5.1.2",
+        "@xterm/addon-fit": "^0.11.0",
+        "@xterm/addon-web-links": "^0.12.0",
+        "@xterm/addon-webgl": "^0.19.0",
+        "@xterm/xterm": "^6.0.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },

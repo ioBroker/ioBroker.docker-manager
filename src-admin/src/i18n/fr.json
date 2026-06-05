@@ -142,5 +142,7 @@
   "removing": "suppression",
   "restarting": "redémarrage",
   "running": "en cours d'exécution",
-  "volume_explanation": "Dans Docker, un volume est un stockage persistant géré par Docker, indépendant des conteneurs. Il protège les données lors de la suppression ou de la recréation des conteneurs et constitue la méthode recommandée pour stocker les données d'application."
+  "volume_explanation": "Dans Docker, un volume est un stockage persistant géré par Docker, indépendant des conteneurs. Il protège les données lors de la suppression ou de la recréation des conteneurs et constitue la méthode recommandée pour stocker les données d'application.",
+  "Open terminal": "Open terminal",
+  "Terminal": "Terminal"
 }

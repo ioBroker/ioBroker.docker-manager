@@ -142,5 +142,7 @@
     "removing": "removing",
     "restarting": "restarting",
     "running": "running",
-    "volume_explanation": "A volume in Docker is a persistent storage managed by Docker, independent of containers.\nIt keeps data safe when containers are removed or recreated and is the recommended way to store application data."
+    "volume_explanation": "A volume in Docker is a persistent storage managed by Docker, independent of containers.\nIt keeps data safe when containers are removed or recreated and is the recommended way to store application data.",
+    "Open terminal": "Open terminal",
+    "Terminal": "Terminal"
 }

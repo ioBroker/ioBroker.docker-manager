@@ -1,6 +1,6 @@
 import { type AdapterOptions, Adapter } from '@iobroker/adapter-core';
 import type { DockerImageTagsResponse } from '@iobroker/plugin-docker';
-import type { DockerManagerAdapterConfig, GUIResponse } from './types';
+import type { DockerManagerAdapterConfig, GUIResponse, TerminalRequest } from './types';
 
 import DockerMonitor from './lib/DockerMonitor';
 import axios from 'axios';
@@ -92,6 +92,7 @@ export class DockerManagerAdapter extends Adapter {
                 ownIp: string;
                 command?: string;
                 terminate?: boolean;
+                terminal?: TerminalRequest;
             };
         } = message.message;
 
@@ -100,6 +101,25 @@ export class DockerManagerAdapter extends Adapter {
         }
         if (!msg.data.ownIp) {
             return { error: `Invalid message: no own IP`, accepted: false };
+        }
+
+        // Interactive container terminal control messages. These are bound to the GUI client (clientId)
+        // so the output can be pushed back to exactly this subscriber. They intentionally do not carry a
+        // top-level containerId, so they neither disturb the container-list polling nor the one-shot exec.
+        if (msg.data.terminal) {
+            const t = msg.data.terminal;
+            if (t.action === 'create') {
+                void this.#dockerMonitor
+                    ?.terminalCreate(clientId, t.containerId, t.shell)
+                    .catch(e => this.log.warn(`Cannot create terminal: ${e}`));
+            } else if (t.action === 'data') {
+                this.#dockerMonitor?.terminalWrite(clientId, t.data);
+            } else if (t.action === 'resize') {
+                this.#dockerMonitor?.terminalResize(clientId, t.cols, t.rows);
+            } else if (t.action === 'close') {
+                this.#dockerMonitor?.terminalClose(clientId);
+            }
+            return { accepted: true };
         }
         // inform GUI that subscription is started
         const sub = this.#_guiSubscribes.find(s => s.clientId === clientId);
@@ -139,6 +159,8 @@ export class DockerManagerAdapter extends Adapter {
         if (!this.#_guiSubscribes) {
             return;
         }
+        // Close an interactive terminal that this client might have open
+        this.#dockerMonitor?.terminalClose(clientId);
         let deleted;
         do {
             deleted = false;

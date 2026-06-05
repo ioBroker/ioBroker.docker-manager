@@ -142,5 +142,7 @@
     "removing": "Entfernen",
     "restarting": "Neustart",
     "running": "läuft",
-    "volume_explanation": "Ein Volume in Docker ist ein von Docker verwalteter persistenter Speicher, der unabhängig von Containern ist.\nEs schützt Daten, wenn Container entfernt oder neu erstellt werden, und ist die empfohlene Methode zum Speichern von Anwendungsdaten."
+    "volume_explanation": "Ein Volume in Docker ist ein von Docker verwalteter persistenter Speicher, der unabhängig von Containern ist.\nEs schützt Daten, wenn Container entfernt oder neu erstellt werden, und ist die empfohlene Methode zum Speichern von Anwendungsdaten.",
+    "Open terminal": "Terminal öffnen",
+    "Terminal": "Terminal"
 }

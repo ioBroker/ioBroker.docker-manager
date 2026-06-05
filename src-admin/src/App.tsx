@@ -34,7 +34,7 @@ import type {
     NetworkInfo,
     VolumeInfo,
 } from '@iobroker/plugin-docker';
-import type { DockerManagerAdapterConfig, GUIResponse } from './types';
+import type { DockerManagerAdapterConfig, GUIResponse, GUIResponseTerminal } from './types';
 
 const styles: { [styleName: string]: any } = {
     tabContent: {
@@ -92,6 +92,9 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
     private lastRefresh = 0;
     private commandCallbacks: {
         [containerId: string]: (data: { stderr: string; stdout: string; code?: number | null }) => void;
+    } = {};
+    private terminalCallbacks: {
+        [containerId: string]: (data: GUIResponseTerminal) => void;
     } = {};
 
     constructor(props: GenericAppProps) {
@@ -250,6 +253,54 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
             .catch(this.onSubscribeToBackEndFailed);
     };
 
+    // Drive an interactive container terminal. Output arrives via onBackendUpdates -> terminalCallbacks.
+    onTerminalStart = (containerId: string, shell: string, cb: (data: GUIResponseTerminal) => void): void => {
+        this.terminalCallbacks[containerId] = cb;
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'create', containerId, shell } },
+                this.onBackendUpdates,
+            )
+            .then(this.onSubscribeToBackEndSubmitted)
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
+    onTerminalSend = (containerId: string, data: string): void => {
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'data', containerId, data } },
+                this.onBackendUpdates,
+            )
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
+    onTerminalResize = (containerId: string, cols: number, rows: number): void => {
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'resize', containerId, cols, rows } },
+                this.onBackendUpdates,
+            )
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
+    onTerminalStop = (containerId: string): void => {
+        delete this.terminalCallbacks[containerId];
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'close', containerId } },
+                this.onBackendUpdates,
+            )
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
     async onConnectionReady(): Promise<void> {
         super.onConnectionReady();
         const alive = await this.socket.getState(`system.adapter.docker-manager.${this.instance}.alive`);
@@ -311,6 +362,13 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                 if (update.data.code !== undefined) {
                     delete this.commandCallbacks[update.data.containerId];
                 }
+            }
+            return;
+        }
+        if (update.command === 'terminal') {
+            this.terminalCallbacks[update.containerId]?.(update);
+            if (update.exit) {
+                delete this.terminalCallbacks[update.containerId];
             }
             return;
         }
@@ -411,6 +469,10 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                 networks={this.state.networks}
                 themeType={this.state.themeType}
                 onExecuteCommand={this.onExecuteCommand}
+                onTerminalStart={this.onTerminalStart}
+                onTerminalSend={this.onTerminalSend}
+                onTerminalResize={this.onTerminalResize}
+                onTerminalStop={this.onTerminalStop}
                 removeSupported={!!this.state.dockerInfo?.removeSupported}
             />
         );

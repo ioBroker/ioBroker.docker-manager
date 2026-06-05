@@ -142,5 +142,7 @@
   "removing": "verwijderen",
   "restarting": "opnieuw opstarten",
   "running": "rennen",
-  "volume_explanation": "Een volume in Docker is een permanente opslag die door Docker wordt beheerd en onafhankelijk is van containers.\nHet houdt gegevens veilig wanneer containers worden verwijderd of opnieuw worden aangemaakt en is de aanbevolen manier om applicatiegegevens op te slaan."
+  "volume_explanation": "Een volume in Docker is een permanente opslag die door Docker wordt beheerd en onafhankelijk is van containers.\nHet houdt gegevens veilig wanneer containers worden verwijderd of opnieuw worden aangemaakt en is de aanbevolen manier om applicatiegegevens op te slaan.",
+  "Open terminal": "Open terminal",
+  "Terminal": "Terminal"
 }

@@ -142,5 +142,7 @@
   "removing": "移除",
   "restarting": "重启",
   "running": "跑步",
-  "volume_explanation": "Docker 中的卷是由 Docker 管理的独立于容器的持久存储。\n当容器被删除或重新创建时，它可以保证数据的安全，是存储应用程序数据的推荐方式。"
+  "volume_explanation": "Docker 中的卷是由 Docker 管理的独立于容器的持久存储。\n当容器被删除或重新创建时，它可以保证数据的安全，是存储应用程序数据的推荐方式。",
+  "Open terminal": "Open terminal",
+  "Terminal": "Terminal"
 }
