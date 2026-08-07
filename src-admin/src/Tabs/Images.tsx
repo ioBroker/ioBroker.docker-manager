@@ -111,6 +111,7 @@ export default class ImagesTab extends Component<ImagesTabProps, ImagesTabState>
                     <Autocomplete
                         fullWidth
                         disablePortal
+                        autoFocus
                         options={this.state.imageAutocomplete[this.state.addImageName] || []}
                         renderInput={params => (
                             <TextField
