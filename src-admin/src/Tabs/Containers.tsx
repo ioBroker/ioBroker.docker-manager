@@ -48,6 +48,7 @@ import type {
 } from '@iobroker/plugin-docker';
 import CreateContainerDialog from '../Components/CreateContainer';
 import ContainerTerminal from '../Components/ContainerTerminal';
+import JsonViewer from '../Components/JsonViewer';
 import { mapInspectToConfig } from '../Components/utils';
 import type { GUIResponseTerminal } from '../types';
 
@@ -76,6 +77,8 @@ interface ContainersTabProps {
 interface ContainersTabState {
     showAddDialog: boolean;
     requestingInspect: string;
+    /** Container whose logs are being fetched - reading them can take a while on a busy container */
+    requestingLogs: string;
     showAddComposeDialog: boolean;
     addCompose: string;
     logs: string[] | null;
@@ -115,6 +118,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
             addImage: null,
             requesting: false,
             requestingInspect: '',
+            requestingLogs: '',
             showRecreateDialog: '',
             showStopDialog: '',
             showRestartDialog: '',
@@ -674,9 +678,12 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>{I18n.t('Image information')}</DialogTitle>
-                <DialogContent style={{ display: 'flex', gap: 20, flexDirection: 'column' }}>
-                    <pre>{JSON.stringify(info, null, 2)}</pre>
+                <DialogTitle>{I18n.t('Container information')}</DialogTitle>
+                <DialogContent
+                    dividers
+                    style={{ height: '70vh', display: 'flex', flexDirection: 'column' }}
+                >
+                    <JsonViewer data={info} />
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -1273,10 +1280,14 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                         size="small"
                                         title={I18n.t('Logs')}
                                         disabled={
-                                            !this.props.alive || this.state.requesting || !!this.state.requestingInspect
+                                            !this.props.alive ||
+                                            this.state.requesting ||
+                                            !!this.state.requestingInspect ||
+                                            !!this.state.requestingLogs
                                         }
                                         onClick={async () => {
                                             try {
+                                                await this.setStateAsync({ requestingLogs: container.id });
                                                 const result: { result: string[] | null } =
                                                     await this.props.socket.sendTo(
                                                         `docker-manager.${this.props.instance}`,
@@ -1287,16 +1298,24 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                                     );
                                                 this.setState({
                                                     showAddDialog: false,
+                                                    requestingLogs: '',
                                                     logs: result?.result,
                                                     showError: !result?.result ? 'Cannot get logs for container' : '',
                                                 });
                                             } catch (e) {
+                                                // Reset the flag here too, otherwise the spinner would keep
+                                                // turning and every action button would stay disabled
+                                                this.setState({ requestingLogs: '' });
                                                 console.error(`Cannot get logs for container ${container.id}: ${e}`);
                                                 alert(`Cannot get logs for container ${container.id}: ${e}`);
                                             }
                                         }}
                                     >
-                                        <LogsIcon />
+                                        {this.state.requestingLogs === container.id ? (
+                                            <CircularProgress size={18} />
+                                        ) : (
+                                            <LogsIcon />
+                                        )}
                                     </IconButton>
                                     <IconButton
                                         size="small"
@@ -1355,6 +1374,9 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                                         : '',
                                                 });
                                             } catch (e) {
+                                                // Reset the flag here too, otherwise the spinner would keep
+                                                // turning and every action button would stay disabled
+                                                this.setState({ requestingInspect: '' });
                                                 console.error(
                                                     `Cannot get information for container ${container.id}: ${e}`,
                                                 );

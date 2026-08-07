@@ -3,6 +3,8 @@
     "version": "0.1.5",
     "private": true,
     "dependencies": {
+        "@emotion/styled": "^11.14.1",
+        "@emotion/react": "^11.14.0",
         "@iobroker/gui-components": "^10.0.14",
         "@iobroker/type-detector": "^5.0.15",
         "@iobroker/plugin-docker": "^1.0.3",

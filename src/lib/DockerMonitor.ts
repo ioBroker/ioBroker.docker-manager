@@ -106,6 +106,12 @@ export default class DockerMonitor extends DockerManager {
             proc?: ChildProcessWithoutNullStreams;
         };
     } = {};
+    /**
+     * Size the GUI asked for before its terminal existed. The client sends the fitted size
+     * immediately after `create`, which normally wins the race against the shell actually
+     * starting - without this the resize would be dropped and the shell would stay at 80x24.
+     */
+    readonly #pendingSizes: { [sid: string]: { cols: number; rows: number } } = {};
     // Lazily created dockerode instance reused for interactive exec (undefined = not probed yet, null = CLI only)
     #execDocker: Docker | null | undefined = undefined;
     readonly checkedURLs: { [url: string]: boolean | 'timeout' } = {};
@@ -527,60 +533,120 @@ export default class DockerMonitor extends DockerManager {
     }
 
     /**
+     * Shells to try, in order. `/bin/sh` exists in practically every image, so it is the last
+     * resort when the requested one is missing - picking "bash" for an Alpine container is an
+     * easy mistake to make, and it used to just fail.
+     */
+    static #shellCandidates(shell?: string): string[] {
+        const requested = shell || '/bin/sh';
+        return requested === '/bin/sh' ? [requested] : [requested, '/bin/sh'];
+    }
+
+    /** Apply the size the GUI requested while the shell was still starting */
+    #applyPendingSize(sid: string): void {
+        const size = this.#pendingSizes[sid];
+        if (size) {
+            delete this.#pendingSizes[sid];
+            this.terminalResize(sid, size.cols, size.rows);
+        }
+    }
+
+    /**
      * Start an interactive terminal (a shell with a real TTY) inside a container for one GUI client.
      * Output is streamed back to the client via `sendToGui({ command: 'terminal' })`.
      */
     async terminalCreate(sid: string, containerId: string, shell?: string): Promise<void> {
         // Only one terminal per client - drop the previous one
         this.terminalClose(sid);
-        const cmd = shell || '/bin/sh';
+        const candidates = DockerMonitor.#shellCandidates(shell);
 
         const docker = await this.#getDockerodeForExec();
         if (docker) {
-            try {
-                const container = docker.getContainer(containerId);
-                const exec = await container.exec({
-                    AttachStdin: true,
-                    AttachStdout: true,
-                    AttachStderr: true,
-                    Tty: true,
-                    Cmd: [cmd],
-                });
-                // With Tty:true the hijacked stream is a single, non-multiplexed duplex stream
-                const stream = await exec.start({ hijack: true, stdin: true, Tty: true });
-                this.#terminals[sid] = { containerId, exec, stream };
+            const container = docker.getContainer(containerId);
+            let lastError = '';
 
-                stream.on('data', (chunk: Buffer) => {
-                    void this.#adapter.sendToGui(
-                        { command: 'terminal', containerId, data: chunk.toString('utf8') },
-                        sid,
-                    );
-                });
-                const onEnd = (): void => {
-                    if (this.#terminals[sid]?.stream === stream) {
-                        delete this.#terminals[sid];
-                        void this.#adapter.sendToGui({ command: 'terminal', containerId, exit: true }, sid);
+            for (const cmd of candidates) {
+                try {
+                    const exec = await container.exec({
+                        AttachStdin: true,
+                        AttachStdout: true,
+                        AttachStderr: true,
+                        Tty: true,
+                        Cmd: [cmd],
+                    });
+                    // With Tty:true the hijacked stream is a single, non-multiplexed duplex stream
+                    const stream = await exec.start({ hijack: true, stdin: true, Tty: true });
+                    this.#terminals[sid] = { containerId, exec, stream };
+
+                    if (cmd !== candidates[0]) {
+                        void this.#adapter.sendToGui(
+                            {
+                                command: 'terminal',
+                                containerId,
+                                data: `\r\n\x1b[33m${candidates[0]} not available, using ${cmd}\x1b[0m\r\n`,
+                            },
+                            sid,
+                        );
                     }
-                };
-                stream.on('end', onEnd);
-                stream.on('close', onEnd);
-                stream.on('error', (e: Error) => {
-                    delete this.#terminals[sid];
-                    void this.#adapter.sendToGui(
-                        { command: 'terminal', containerId, error: e.message, exit: true },
-                        sid,
-                    );
-                });
-            } catch (e) {
-                void this.#adapter.sendToGui(
-                    { command: 'terminal', containerId, error: (e as Error).message, exit: true },
-                    sid,
-                );
+
+                    stream.on('data', (chunk: Buffer) => {
+                        void this.#adapter.sendToGui(
+                            { command: 'terminal', containerId, data: chunk.toString('utf8') },
+                            sid,
+                        );
+                    });
+                    const onEnd = (): void => {
+                        if (this.#terminals[sid]?.stream === stream) {
+                            delete this.#terminals[sid];
+                            // 126/127 mean the shell could not be executed - without this the dialog
+                            // would just close with no hint about which shell was missing.
+                            exec.inspect()
+                                .then(info =>
+                                    this.#adapter.sendToGui(
+                                        {
+                                            command: 'terminal',
+                                            containerId,
+                                            error:
+                                                info.ExitCode === 126 || info.ExitCode === 127
+                                                    ? `${cmd}: not found in this image`
+                                                    : undefined,
+                                            exit: true,
+                                        },
+                                        sid,
+                                    ),
+                                )
+                                .catch(() =>
+                                    this.#adapter.sendToGui({ command: 'terminal', containerId, exit: true }, sid),
+                                );
+                        }
+                    };
+                    stream.on('end', onEnd);
+                    stream.on('close', onEnd);
+                    stream.on('error', (e: Error) => {
+                        delete this.#terminals[sid];
+                        void this.#adapter.sendToGui(
+                            { command: 'terminal', containerId, error: e.message, exit: true },
+                            sid,
+                        );
+                    });
+
+                    this.#applyPendingSize(sid);
+                    return;
+                } catch (e) {
+                    // Most likely the image does not ship this shell - try the next candidate
+                    lastError = (e as Error).message;
+                    this.log.debug(`Cannot start ${cmd} in ${containerId}: ${lastError}`);
+                }
             }
+
+            void this.#adapter.sendToGui({ command: 'terminal', containerId, error: lastError, exit: true }, sid);
             return;
         }
 
         // CLI fallback: no socket/API reachable. `-i` keeps stdin open (no real TTY, but a usable shell).
+        // Only one attempt here: without a TTY the exit code of a missing shell is reported on stderr,
+        // which is forwarded to the client anyway.
+        const cmd = candidates[0];
         try {
             const args = ['exec', '-i', containerId, cmd];
             this.log.debug(`Executing: ${this.needSudo ? 'sudo ' : ''}docker ${args.join(' ')}`);
@@ -631,14 +697,23 @@ export default class DockerMonitor extends DockerManager {
 
     /** Resize the terminal's TTY (only supported via the Docker API path) */
     terminalResize(sid: string, cols: number, rows: number): void {
+        if (cols <= 0 || rows <= 0) {
+            return;
+        }
         const t = this.#terminals[sid];
-        if (t?.exec && cols > 0 && rows > 0) {
+        if (!t) {
+            // The shell is still starting - remember the size and apply it once it is up
+            this.#pendingSizes[sid] = { cols, rows };
+            return;
+        }
+        if (t.exec) {
             t.exec.resize({ h: rows, w: cols }).catch(e => this.log.debug(`Cannot resize terminal: ${e}`));
         }
     }
 
     /** Stop the terminal for a GUI client and clean up the underlying process/stream */
     terminalClose(sid: string): void {
+        delete this.#pendingSizes[sid];
         const t = this.#terminals[sid];
         if (!t) {
             return;

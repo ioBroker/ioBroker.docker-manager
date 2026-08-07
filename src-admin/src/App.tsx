@@ -10,9 +10,11 @@ import {
     GenericApp,
     I18n,
     Loader,
+    Utils,
     type GenericAppProps,
     type GenericAppState,
     type IobTheme,
+    type ThemeName,
 } from '@iobroker/gui-components';
 
 import enLang from './i18n/en.json';
@@ -143,6 +145,22 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
 
         this.alert = window.alert;
         window.alert = text => this.showToast(text);
+    }
+
+    /**
+     * Render in the admin 8 design.
+     *
+     * `modernDark`/`modernLight` are the documented successors of `dark`/`light`, and
+     * `Utils.getThemeName` already defaults to them - but a browser that still has the legacy
+     * name in `App.themeName` would keep the old look, so map those two over. Vendor themes
+     * (PT, DX, NW, HA) and the remaining legacy ones are left alone, they have no modern variant.
+     */
+    createTheme(name?: ThemeName | 'auto' | null): IobTheme {
+        // Resolve first: without a name the legacy value comes out of `App.themeName` inside
+        // `super.createTheme`, where it would be too late to map it.
+        const resolved = Utils.getThemeName(name);
+        const modern: Partial<Record<string, ThemeName>> = { dark: 'modernDark', light: 'modernLight' };
+        return super.createTheme(modern[resolved] ?? resolved);
     }
 
     onSubscribeToBackEndSubmitted = (
