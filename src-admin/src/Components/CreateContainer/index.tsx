@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 
-import { type AdminConnection, I18n, type IobTheme, type ThemeType } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, type IobTheme, type ThemeType } from '@iobroker/gui-components';
 
 import type { ContainerConfig, ContainerInfo, ImageInfo, NetworkInfo } from '@iobroker/plugin-docker';
 import MainTab, { validateConfig as validateConfigMain } from './MainTab';

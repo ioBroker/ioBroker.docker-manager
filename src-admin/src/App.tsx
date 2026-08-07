@@ -3,17 +3,19 @@ import React from 'react';
 
 import { AppBar, Tooltip, Tabs, Tab } from '@mui/material';
 import { SignalCellularOff as IconNotAlive } from '@mui/icons-material';
-import { IconButton as IconButton76 } from '@foxriver76/iob-component-lib';
+import IconButton76 from './Components/IconButton';
 
 import {
     AdminConnection,
     GenericApp,
     I18n,
     Loader,
+    Utils,
     type GenericAppProps,
     type GenericAppState,
     type IobTheme,
-} from '@iobroker/adapter-react-v5';
+    type ThemeName,
+} from '@iobroker/gui-components';
 
 import enLang from './i18n/en.json';
 import deLang from './i18n/de.json';
@@ -34,7 +36,7 @@ import type {
     NetworkInfo,
     VolumeInfo,
 } from '@iobroker/plugin-docker';
-import type { DockerManagerAdapterConfig, GUIResponse } from './types';
+import type { DockerManagerAdapterConfig, GUIResponse, GUIResponseTerminal } from './types';
 
 const styles: { [styleName: string]: any } = {
     tabContent: {
@@ -93,6 +95,9 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
     private commandCallbacks: {
         [containerId: string]: (data: { stderr: string; stdout: string; code?: number | null }) => void;
     } = {};
+    private terminalCallbacks: {
+        [containerId: string]: (data: GUIResponseTerminal) => void;
+    } = {};
 
     constructor(props: GenericAppProps) {
         const extendedProps: GenericAppProps = { ...props };
@@ -123,11 +128,7 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
 
         let selectedTab =
             (window.localStorage.getItem(`${this.adapterName}.${this.instance}.selectedTab`) as
-                | 'info'
-                | 'images'
-                | 'options'
-                | 'containers'
-                | 'networks') || 'info';
+                'info' | 'images' | 'options' | 'containers' | 'networks') || 'info';
         if (this.isTab && selectedTab === 'options') {
             selectedTab = 'info';
         }
@@ -144,6 +145,22 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
 
         this.alert = window.alert;
         window.alert = text => this.showToast(text);
+    }
+
+    /**
+     * Render in the admin 8 design.
+     *
+     * `modernDark`/`modernLight` are the documented successors of `dark`/`light`, and
+     * `Utils.getThemeName` already defaults to them - but a browser that still has the legacy
+     * name in `App.themeName` would keep the old look, so map those two over. Vendor themes
+     * (PT, DX, NW, HA) and the remaining legacy ones are left alone, they have no modern variant.
+     */
+    createTheme(name?: ThemeName | 'auto' | null): IobTheme {
+        // Resolve first: without a name the legacy value comes out of `App.themeName` inside
+        // `super.createTheme`, where it would be too late to map it.
+        const resolved = Utils.getThemeName(name);
+        const modern: Partial<Record<string, ThemeName>> = { dark: 'modernDark', light: 'modernLight' };
+        return super.createTheme(modern[resolved] ?? resolved);
     }
 
     onSubscribeToBackEndSubmitted = (
@@ -221,7 +238,7 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
     onExecuteCommand = (
         containerId: string,
         command: string,
-        cb: ((data: { stderr: string; stdout: string; code?: number }) => void) | null,
+        cb: ((data: { stderr: string; stdout: string; code?: number | null }) => void) | null,
     ): void => {
         if (!cb) {
             if (this.commandCallbacks[containerId]) {
@@ -247,6 +264,54 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                 this.onBackendUpdates,
             )
             .then(this.onSubscribeToBackEndSubmitted)
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
+    // Drive an interactive container terminal. Output arrives via onBackendUpdates -> terminalCallbacks.
+    onTerminalStart = (containerId: string, shell: string, cb: (data: GUIResponseTerminal) => void): void => {
+        this.terminalCallbacks[containerId] = cb;
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'create', containerId, shell } },
+                this.onBackendUpdates,
+            )
+            .then(this.onSubscribeToBackEndSubmitted)
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
+    onTerminalSend = (containerId: string, data: string): void => {
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'data', containerId, data } },
+                this.onBackendUpdates,
+            )
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
+    onTerminalResize = (containerId: string, cols: number, rows: number): void => {
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'resize', containerId, cols, rows } },
+                this.onBackendUpdates,
+            )
+            .catch(this.onSubscribeToBackEndFailed);
+    };
+
+    onTerminalStop = (containerId: string): void => {
+        delete this.terminalCallbacks[containerId];
+        void this.socket
+            .subscribeOnInstance(
+                `docker-manager.${this.instance}`,
+                'containers',
+                { ownIp: window.location.hostname, terminal: { action: 'close', containerId } },
+                this.onBackendUpdates,
+            )
             .catch(this.onSubscribeToBackEndFailed);
     };
 
@@ -311,6 +376,13 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                 if (update.data.code !== undefined) {
                     delete this.commandCallbacks[update.data.containerId];
                 }
+            }
+            return;
+        }
+        if (update.command === 'terminal') {
+            this.terminalCallbacks[update.containerId]?.(update);
+            if (update.exit) {
+                delete this.terminalCallbacks[update.containerId];
             }
             return;
         }
@@ -411,6 +483,10 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                 networks={this.state.networks}
                 themeType={this.state.themeType}
                 onExecuteCommand={this.onExecuteCommand}
+                onTerminalStart={this.onTerminalStart}
+                onTerminalSend={this.onTerminalSend}
+                onTerminalResize={this.onTerminalResize}
+                onTerminalStop={this.onTerminalStop}
                 removeSupported={!!this.state.dockerInfo?.removeSupported}
             />
         );

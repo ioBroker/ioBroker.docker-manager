@@ -66,6 +66,15 @@ export type GUIResponseVolumes = {
     data?: VolumeInfo[];
     error?: string;
 };
+export type GUIResponseTerminal = {
+    command: 'terminal';
+    containerId: string;
+    /** Raw output chunk of the interactive shell (already UTF-8 decoded) */
+    data?: string;
+    /** Set to true when the shell process has ended */
+    exit?: boolean;
+    error?: string;
+};
 
 export type GUIResponse =
     | GUIResponseInfo
@@ -75,7 +84,15 @@ export type GUIResponse =
     | GUIResponseExec
     | GUIResponseNetworks
     | GUIResponseVolumes
+    | GUIResponseTerminal
     | { command: 'stopped' };
+
+/** Control message sent from the GUI to drive an interactive container terminal */
+export type TerminalRequest =
+    | { action: 'create'; containerId: string; shell?: string }
+    | { action: 'data'; containerId: string; data: string }
+    | { action: 'resize'; containerId: string; cols: number; rows: number }
+    | { action: 'close'; containerId: string };
 
 export interface DockerManagerAdapterConfig extends ioBroker.AdapterConfig {
     dockerApi: boolean;

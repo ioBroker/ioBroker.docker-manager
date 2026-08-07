@@ -24,7 +24,7 @@ import {
     FormControl,
 } from '@mui/material';
 
-import { type AdminConnection, I18n, InfoBox, type ThemeType } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, InfoBox, type ThemeType } from '@iobroker/gui-components';
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
@@ -36,6 +36,7 @@ import {
 
 import type { ContainerInfo, ImageInfo, DockerImageInspect, DockerImageTagsResponse } from '@iobroker/plugin-docker';
 import { size2string } from '../Components/utils';
+import JsonViewer from '../Components/JsonViewer';
 
 interface ImagesTabProps {
     socket: AdminConnection;
@@ -435,8 +436,11 @@ export default class ImagesTab extends Component<ImagesTabProps, ImagesTabState>
                 fullWidth
             >
                 <DialogTitle>{I18n.t('Image information')}</DialogTitle>
-                <DialogContent style={{ display: 'flex', gap: 20, flexDirection: 'column' }}>
-                    <pre>{JSON.stringify(info, null, 2)}</pre>
+                <DialogContent
+                    dividers
+                    style={{ height: '70vh', display: 'flex', flexDirection: 'column' }}
+                >
+                    <JsonViewer data={info} />
                 </DialogContent>
                 <DialogActions>
                     <Button

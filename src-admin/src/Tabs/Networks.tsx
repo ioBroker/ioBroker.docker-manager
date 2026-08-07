@@ -23,7 +23,7 @@ import {
     FormControl,
 } from '@mui/material';
 
-import { type AdminConnection, I18n, InfoBox } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, InfoBox } from '@iobroker/gui-components';
 import { Add as AddIcon, Delete as DeleteIcon, Warning as AlertIcon, Close as CloseIcon } from '@mui/icons-material';
 
 import type { NetworkInfo, NetworkDriver } from '@iobroker/plugin-docker';

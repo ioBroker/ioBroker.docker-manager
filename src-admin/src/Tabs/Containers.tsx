@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { type AdminConnection, I18n, InfoBox, type IobTheme, type ThemeType } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, InfoBox, type IobTheme, type ThemeType } from '@iobroker/gui-components';
 import {
     Box,
     Button,
@@ -9,11 +9,13 @@ import {
     DialogContent,
     DialogTitle,
     Fab,
+    FormControl,
     IconButton,
     LinearProgress,
     Menu,
     MenuItem,
     Paper,
+    Select,
     Snackbar,
     Table,
     TableBody,
@@ -34,6 +36,7 @@ import {
     Info as InfoIcon,
     ReceiptLong as LogsIcon,
     TextRotationNone as ExecuteIcon,
+    Terminal as TerminalIcon,
     Stop,
 } from '@mui/icons-material';
 import type {
@@ -44,7 +47,10 @@ import type {
     NetworkInfo,
 } from '@iobroker/plugin-docker';
 import CreateContainerDialog from '../Components/CreateContainer';
+import ContainerTerminal from '../Components/ContainerTerminal';
+import JsonViewer from '../Components/JsonViewer';
 import { mapInspectToConfig } from '../Components/utils';
+import type { GUIResponseTerminal } from '../types';
 
 interface ContainersTabProps {
     socket: AdminConnection;
@@ -61,12 +67,18 @@ interface ContainersTabProps {
         command: string,
         cb: ((data: { stderr: string; stdout: string; code?: number | null }) => void) | null,
     ) => void;
+    onTerminalStart: (containerId: string, shell: string, cb: (data: GUIResponseTerminal) => void) => void;
+    onTerminalSend: (containerId: string, data: string) => void;
+    onTerminalResize: (containerId: string, cols: number, rows: number) => void;
+    onTerminalStop: (containerId: string) => void;
     removeSupported: boolean;
 }
 
 interface ContainersTabState {
     showAddDialog: boolean;
     requestingInspect: string;
+    /** Container whose logs are being fetched - reading them can take a while on a busy container */
+    requestingLogs: string;
     showAddComposeDialog: boolean;
     addCompose: string;
     logs: string[] | null;
@@ -83,6 +95,8 @@ interface ContainersTabState {
     showExecDialog: string;
     execCommand: string;
     execResults: { stderr: string; stdout: string };
+    showTerminal: string; // container id
+    terminalShell: string;
     showLinks: { anchorEl: HTMLElement | null; container: ContainerInfo } | null;
     instances: {
         [instance: string]: { alive: boolean; native: { [key: string]: any } | null; common?: ioBroker.InstanceCommon };
@@ -104,6 +118,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
             addImage: null,
             requesting: false,
             requestingInspect: '',
+            requestingLogs: '',
             showRecreateDialog: '',
             showStopDialog: '',
             showRestartDialog: '',
@@ -113,6 +128,8 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
             showExecDialog: '',
             execCommand: window.localStorage.getItem('exec') || '',
             execResults: { stderr: '', stdout: '' },
+            showTerminal: '',
+            terminalShell: window.localStorage.getItem('terminalShell') || '/bin/sh',
             showLinks: null,
             instances: {},
             showPruneDialog: false,
@@ -661,9 +678,12 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>{I18n.t('Image information')}</DialogTitle>
-                <DialogContent style={{ display: 'flex', gap: 20, flexDirection: 'column' }}>
-                    <pre>{JSON.stringify(info, null, 2)}</pre>
+                <DialogTitle>{I18n.t('Container information')}</DialogTitle>
+                <DialogContent
+                    dividers
+                    style={{ height: '70vh', display: 'flex', flexDirection: 'column' }}
+                >
+                    <JsonViewer data={info} />
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -736,7 +756,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
             this.props.onExecuteCommand(
                 this.state.showExecDialog,
                 this.state.execCommand,
-                (result: { stdout: string; stderr: string; code?: number }): void => {
+                (result: { stdout: string; stderr: string; code?: number | null }): void => {
                     if (result.code !== undefined) {
                         this.setState({
                             requesting: false,
@@ -825,6 +845,66 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                 execResults: { stdout: '', stderr: '' },
                             })
                         }
+                        startIcon={<CloseIcon />}
+                    >
+                        {I18n.t('Close')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    renderTerminalDialog(): React.JSX.Element | null {
+        if (!this.state.showTerminal) {
+            return null;
+        }
+
+        return (
+            <Dialog
+                open={!0}
+                onClose={() => this.setState({ showTerminal: '' })}
+                maxWidth="lg"
+                fullWidth
+            >
+                <DialogTitle style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {I18n.t('Terminal')}: {this.state.showTerminal}
+                    </span>
+                    <FormControl
+                        variant="standard"
+                        style={{ minWidth: 100, marginLeft: 'auto' }}
+                    >
+                        <Select
+                            value={this.state.terminalShell}
+                            onChange={e => {
+                                window.localStorage.setItem('terminalShell', e.target.value);
+                                this.setState({ terminalShell: e.target.value });
+                            }}
+                        >
+                            <MenuItem value="/bin/sh">sh</MenuItem>
+                            <MenuItem value="/bin/bash">bash</MenuItem>
+                            <MenuItem value="/bin/ash">ash</MenuItem>
+                        </Select>
+                    </FormControl>
+                </DialogTitle>
+                <DialogContent style={{ height: '60vh', padding: 8 }}>
+                    <ContainerTerminal
+                        // remount (restart shell) when container or shell changes
+                        key={`${this.state.showTerminal}_${this.state.terminalShell}`}
+                        containerId={this.state.showTerminal}
+                        shell={this.state.terminalShell}
+                        themeType={this.props.themeType}
+                        onTerminalStart={this.props.onTerminalStart}
+                        onTerminalSend={this.props.onTerminalSend}
+                        onTerminalResize={this.props.onTerminalResize}
+                        onTerminalStop={this.props.onTerminalStop}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="grey"
+                        onClick={() => this.setState({ showTerminal: '' })}
                         startIcon={<CloseIcon />}
                     >
                         {I18n.t('Close')}
@@ -1006,6 +1086,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                 {this.renderInspect()}
                 {this.renderLogs()}
                 {this.renderExecDialog()}
+                {this.renderTerminalDialog()}
                 {this.renderLinks()}
                 <InfoBox
                     type="info"
@@ -1019,7 +1100,10 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                             <div key={i.toString()}>{line}</div>
                         ))}
                 </InfoBox>
-                <Table size="small">
+                <Table
+                    size="small"
+                    sx={{ '& tbody td': { verticalAlign: 'top' } }}
+                >
                     <TableHead>
                         <TableRow style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
                             <TableCell>
@@ -1091,21 +1175,20 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                     <TableBody>
                         {this.props.containers?.map(container => (
                             <TableRow key={container.id}>
-                                <TableCell
-                                    style={{ display: 'flex', flexDirection: 'column', gap: 4 }}
-                                    title={this.getInstanceTooltip(container) || undefined}
-                                >
-                                    <div>{container.id || '--'}</div>
-                                    <div
-                                        style={{
-                                            opacity: 0.7,
-                                            fontSize: 'smaller',
-                                            fontStyle: 'italic',
-                                            color: this.getInstanceColor(container),
-                                            height: 16.67,
-                                        }}
-                                    >
-                                        {container.labels?.iobroker || ''}
+                                <TableCell title={this.getInstanceTooltip(container) || undefined}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                        <div>{container.id || '--'}</div>
+                                        <div
+                                            style={{
+                                                opacity: 0.7,
+                                                fontSize: 'smaller',
+                                                fontStyle: 'italic',
+                                                color: this.getInstanceColor(container),
+                                                height: 16.67,
+                                            }}
+                                        >
+                                            {container.labels?.iobroker || ''}
+                                        </div>
                                     </div>
                                 </TableCell>
                                 <TableCell>
@@ -1197,10 +1280,14 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                         size="small"
                                         title={I18n.t('Logs')}
                                         disabled={
-                                            !this.props.alive || this.state.requesting || !!this.state.requestingInspect
+                                            !this.props.alive ||
+                                            this.state.requesting ||
+                                            !!this.state.requestingInspect ||
+                                            !!this.state.requestingLogs
                                         }
                                         onClick={async () => {
                                             try {
+                                                await this.setStateAsync({ requestingLogs: container.id });
                                                 const result: { result: string[] | null } =
                                                     await this.props.socket.sendTo(
                                                         `docker-manager.${this.props.instance}`,
@@ -1211,16 +1298,24 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                                     );
                                                 this.setState({
                                                     showAddDialog: false,
+                                                    requestingLogs: '',
                                                     logs: result?.result,
                                                     showError: !result?.result ? 'Cannot get logs for container' : '',
                                                 });
                                             } catch (e) {
+                                                // Reset the flag here too, otherwise the spinner would keep
+                                                // turning and every action button would stay disabled
+                                                this.setState({ requestingLogs: '' });
                                                 console.error(`Cannot get logs for container ${container.id}: ${e}`);
                                                 alert(`Cannot get logs for container ${container.id}: ${e}`);
                                             }
                                         }}
                                     >
-                                        <LogsIcon />
+                                        {this.state.requestingLogs === container.id ? (
+                                            <CircularProgress size={18} />
+                                        ) : (
+                                            <LogsIcon />
+                                        )}
                                     </IconButton>
                                     <IconButton
                                         size="small"
@@ -1239,6 +1334,19 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                         }
                                     >
                                         <ExecuteIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        size="small"
+                                        title={I18n.t('Open terminal')}
+                                        disabled={
+                                            !this.props.alive ||
+                                            container.status !== 'running' ||
+                                            this.state.requesting ||
+                                            !!this.state.requestingInspect
+                                        }
+                                        onClick={() => this.setState({ showTerminal: container.id })}
+                                    >
+                                        <TerminalIcon />
                                     </IconButton>
                                     <IconButton
                                         size="small"
@@ -1266,6 +1374,9 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                                                         : '',
                                                 });
                                             } catch (e) {
+                                                // Reset the flag here too, otherwise the spinner would keep
+                                                // turning and every action button would stay disabled
+                                                this.setState({ requestingInspect: '' });
                                                 console.error(
                                                     `Cannot get information for container ${container.id}: ${e}`,
                                                 );

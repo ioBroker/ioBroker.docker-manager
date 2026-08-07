@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Paper, TextField, InputLabel, Select, MenuItem, FormControl, Checkbox, FormControlLabel } from '@mui/material';
 
-import { type AdminConnection, I18n, InfoBox } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, InfoBox } from '@iobroker/gui-components';
 
 import type { DockerManagerAdapterConfig } from '../types';
 

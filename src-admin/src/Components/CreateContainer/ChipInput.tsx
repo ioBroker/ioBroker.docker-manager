@@ -3,13 +3,11 @@
  *         Copyright (c) 2014 Call-Em-All (https://github.com/callemall/material-ui)
  */
 import React, { type RefObject, type JSX } from 'react';
-import ReactDOM from 'react-dom';
 
-import { Input, OutlinedInput, InputLabel, Chip, FormControl, FormHelperText, Box } from '@mui/material';
-import FilledInput from '@mui/material/FilledInput/FilledInput';
-import blue from '@mui/material/colors/blue';
+import { Input, OutlinedInput, FilledInput, InputLabel, Chip, FormControl, FormHelperText, Box } from '@mui/material';
+import { blue } from '@mui/material/colors';
 
-import { type IobTheme, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
+import { type IobTheme, type ThemeType, Utils } from '@iobroker/gui-components';
 
 const variantComponent = {
     standard: Input,
@@ -287,11 +285,11 @@ interface ChipInputState {
 }
 
 export default class ChipInput extends React.Component<ChipInputProps, ChipInputState> {
-    private readonly labelRef: React.RefObject<HTMLLabelElement>;
+    private readonly labelRef: React.RefObject<HTMLLabelElement | null>;
 
     private labelNode: HTMLLabelElement | null = null;
 
-    private readonly input: React.RefObject<HTMLInputElement>;
+    private readonly input: React.RefObject<HTMLInputElement | null>;
 
     private readonly newChipKeyCodes: number[];
 
@@ -301,9 +299,9 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
 
     private inputBlurTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    private _keyPressed: boolean;
+    private _keyPressed = false;
 
-    private _preventChipCreation: boolean;
+    private _preventChipCreation = false;
 
     private styles: Record<string, any> = {};
 
@@ -329,8 +327,9 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
 
     componentDidMount(): void {
         if (this.state.variant === 'outlined') {
-            // eslint-disable-next-line react/no-find-dom-node
-            this.labelNode = ReactDOM.findDOMNode(this.labelRef.current) as HTMLLabelElement;
+            // React 19 removed ReactDOM.findDOMNode. The ref is forwarded by MUI's InputLabel
+            // down to the rendered <label>, so it already holds the DOM node.
+            this.labelNode = this.labelRef.current;
             this.forceUpdate();
         }
     }

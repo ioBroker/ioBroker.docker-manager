@@ -93,7 +93,11 @@ The adapter could use the Docker API to communicate with the Docker daemon on ot
 
 ## Changelog
 ### **WORK IN PROGRESS**
-- (copilot) Adapter requires node.js >= 22 now
+
+- (@GermanBluefox) Added an interactive terminal for running containers (xterm.js)
+- (@GermanBluefox) Updated GUI to React 19
+- (@GermanBluefox) Added better JSON viewer for container configuration
+- (@GermanBluefox) Breaking: Node.js 22 is minimum requirement now
 
 ### 0.1.5 (2026-01-09)
 
