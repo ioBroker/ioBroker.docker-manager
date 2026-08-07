@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "docker-manager",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "news": {
+      "1.0.1": {
+        "en": "Added an interactive terminal for running containers (xterm.js)\nUpdated GUI to React 19\nAdded better JSON viewer for container configuration\nBreaking: Node.js 22 is minimum requirement now",
+        "de": "Hinzufügen eines interaktiven Terminals zum Ausführen von Containern (xterm.js)\nAktualisierte GUI zu React 19\nBesserer JSON Viewer für Containerkonfiguration hinzugefügt\nBreaking: Node.js 22 ist jetzt Mindestanforderung",
+        "ru": "Добавлен интерактивный терминал для работы контейнеров (xterm.js)\nОбновленный графический интерфейс React 19\nДобавлен улучшенный просмотрщик JSON для конфигурации контейнера\nNode.js 22 теперь является минимальным требованием",
+        "pt": "Adicionado um terminal interativo para executar contêineres (xterm.js)\nInterface gráfica atualizada para Reagir 19\nAdicionado melhor visualizador JSON para configuração do recipiente\nBreaking: Node.js 22 é requisito mínimo agora",
+        "nl": "Toegevoegd een interactieve terminal voor het uitvoeren van containers (xterm.js)\nBijgewerkte GUI om 19 te reageren\nBetere JSON-viewer toegevoegd voor containerconfiguratie\nBreaking: Node.js 22 is minimale eis nu",
+        "fr": "Ajout d'un terminal interactif pour le fonctionnement des conteneurs (xterm.js)\nMise à jour de l'interface graphique pour réagir 19\nAjout d'un meilleur visionneur JSON pour la configuration du conteneur\nBreaking: Node.js 22 est une exigence minimale maintenant",
+        "it": "Aggiunto un terminale interattivo per l'esecuzione di contenitori (xterm.js)\nGUI aggiornata a React 19\nAggiunto migliore visualizzatore JSON per la configurazione del contenitore\nBreaking: Node.js 22 è requisito minimo ora",
+        "es": "Se agregó un terminal interactivo para contenedores en funcionamiento (xterm.js)\nActualizado GUI para React 19\nAñadido mejor JSON para configuración de contenedores\nBreaking: Node.js 22 es un requisito mínimo ahora",
+        "pl": "Dodano interaktywny terminal do prowadzenia kontenerów (xterm.js)\nAktualizacja GUI do reakcji 19\nDodano lepszą przeglądarkę JSON do konfiguracji kontenera\nBreaking: Node.js 22 jest teraz minimalnym wymogiem",
+        "uk": "Додано інтерактивний термінал для ходових контейнерів (xterm.js)\nОновлений графічний інтерфейс до React 19\nДодано кращий JSON глядача для конфігурації контейнера\nПерерва: Node.js 22 є мінімальною вимогою зараз",
+        "zh-cn": "为运行的容器添加了交互式终端( xterm.js)\n更新到反应 19\n为容器配置添加了更好的 JSON 查看器\n中断:22号节点现在是最低要求"
+      },
       "0.1.5": {
         "en": "Updated packages",
         "de": "Aktualisierte Pakete",
