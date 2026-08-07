@@ -21,7 +21,7 @@
     "url": "https://github.com/ioBroker/ioBroker.docker-manager"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.3.2",
+    "@iobroker/adapter-core": "^3.4.3",
     "@iobroker/plugin-docker": "^0.1.7",
     "axios": "^1.13.2",
     "dockerode": "^4.0.9",
