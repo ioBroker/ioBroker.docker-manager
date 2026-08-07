@@ -547,7 +547,7 @@ export default class DockerMonitor extends DockerManager {
                     Cmd: [cmd],
                 });
                 // With Tty:true the hijacked stream is a single, non-multiplexed duplex stream
-                const stream = (await exec.start({ hijack: true, stdin: true, Tty: true })) as unknown as Duplex;
+                const stream = await exec.start({ hijack: true, stdin: true, Tty: true });
                 this.#terminals[sid] = { containerId, exec, stream };
 
                 stream.on('data', (chunk: Buffer) => {

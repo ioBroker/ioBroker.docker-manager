@@ -95,6 +95,7 @@ The adapter could use the Docker API to communicate with the Docker daemon on ot
 ### **WORK IN PROGRESS**
 
 - (@GermanBluefox) Added an interactive terminal for running containers (xterm.js)
+- (@GermanBluefox) Updated GUI to React 19
 
 ### 0.1.5 (2026-01-09)
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Close as CloseIcon, ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { I18n, type AdminConnection } from '@iobroker/adapter-react-v5';
+import { I18n, type AdminConnection } from '@iobroker/gui-components';
 import {
     Button,
     Dialog,

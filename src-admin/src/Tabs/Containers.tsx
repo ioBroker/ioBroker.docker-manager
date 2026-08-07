@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { type AdminConnection, I18n, InfoBox, type IobTheme, type ThemeType } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, InfoBox, type IobTheme, type ThemeType } from '@iobroker/gui-components';
 import {
     Box,
     Button,
@@ -749,7 +749,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
             this.props.onExecuteCommand(
                 this.state.showExecDialog,
                 this.state.execCommand,
-                (result: { stdout: string; stderr: string; code?: number }): void => {
+                (result: { stdout: string; stderr: string; code?: number | null }): void => {
                     if (result.code !== undefined) {
                         this.setState({
                             requesting: false,

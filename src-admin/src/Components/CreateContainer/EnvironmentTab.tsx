@@ -11,7 +11,7 @@ import {
     Button,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import type { ContainerConfig, ContainerInfo, ImageInfo } from '@iobroker/plugin-docker';
 import styles from './styles';

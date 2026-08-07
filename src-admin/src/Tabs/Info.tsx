@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
 
-import { type AdminConnection, I18n, InfoBox } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, InfoBox } from '@iobroker/gui-components';
 import type { DiskUsage } from '@iobroker/plugin-docker';
 import { size2string } from '../Components/utils';
 
@@ -58,19 +58,15 @@ export default function InfoTab(props: InfoTabProps): React.JSX.Element {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {['images', 'containers', 'volumes', 'buildCache'].map(
-                            (type: 'images' | 'containers' | 'volumes' | 'buildCache') => (
-                                <TableRow key={type}>
-                                    <TableCell>{I18n.t(type.charAt(0).toUpperCase() + type.slice(1))}</TableCell>
-                                    <TableCell>{props.info ? props.info[type]?.total : '--'}</TableCell>
-                                    <TableCell>{props.info ? props.info[type]?.active : '--'}</TableCell>
-                                    <TableCell>{props.info ? size2string(props.info[type]?.size) : '--'}</TableCell>
-                                    <TableCell>
-                                        {props.info ? size2string(props.info[type]?.reclaimable) : '--'}
-                                    </TableCell>
-                                </TableRow>
-                            ),
-                        )}
+                        {(['images', 'containers', 'volumes', 'buildCache'] as const).map(type => (
+                            <TableRow key={type}>
+                                <TableCell>{I18n.t(type.charAt(0).toUpperCase() + type.slice(1))}</TableCell>
+                                <TableCell>{props.info ? props.info[type]?.total : '--'}</TableCell>
+                                <TableCell>{props.info ? props.info[type]?.active : '--'}</TableCell>
+                                <TableCell>{props.info ? size2string(props.info[type]?.size) : '--'}</TableCell>
+                                <TableCell>{props.info ? size2string(props.info[type]?.reclaimable) : '--'}</TableCell>
+                            </TableRow>
+                        ))}
                         <TableRow>
                             <TableCell>{I18n.t('Total')}</TableCell>
                             <TableCell />

@@ -15,7 +15,7 @@ import {
     FormControl,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import type { ContainerConfig, ContainerInfo, ImageInfo, VolumeMount } from '@iobroker/plugin-docker';
 import styles from './styles';
@@ -112,7 +112,7 @@ export default function VolumeTab(props: {
                                             const mounts = [...(props.config.mounts || [])];
                                             mounts[index] = {
                                                 ...mounts[index],
-                                                type: e.target.value as 'bind' | 'volume' | 'tmpfs' | 'npipe',
+                                                type: e.target.value,
                                             };
                                             props.onChange({
                                                 ...props.config,
@@ -134,7 +134,7 @@ export default function VolumeTab(props: {
                                     fullWidth
                                     value={mount.source || ''}
                                     onChange={e => {
-                                        const mounts = props.config.mounts || [];
+                                        const mounts = [...(props.config.mounts || [])];
                                         mounts[index] = {
                                             ...mounts[index],
                                             source: e.target.value,

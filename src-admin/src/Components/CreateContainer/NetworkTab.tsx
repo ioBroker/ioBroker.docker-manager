@@ -17,16 +17,9 @@ import {
     FormControl,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
-import type {
-    ContainerConfig,
-    ContainerInfo,
-    ImageInfo,
-    NetworkInfo,
-    PortBinding,
-    Protocol,
-} from '@iobroker/plugin-docker';
+import type { ContainerConfig, ContainerInfo, ImageInfo, NetworkInfo, PortBinding } from '@iobroker/plugin-docker';
 import styles from './styles';
 
 export function validateConfig(
@@ -230,7 +223,7 @@ export default function NetworkTab(props: {
                                             const newPorts = [...(props.config.ports || [])];
                                             newPorts[index] = {
                                                 ...newPorts[index],
-                                                protocol: e.target.value as Protocol,
+                                                protocol: e.target.value,
                                             };
                                             props.onChange({ ...props.config, ports: newPorts });
                                         }}

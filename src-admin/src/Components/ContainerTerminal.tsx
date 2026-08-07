@@ -3,7 +3,7 @@ import { Terminal, type ITheme } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import { WebglAddon } from '@xterm/addon-webgl';
-import type { ThemeType } from '@iobroker/adapter-react-v5';
+import type { ThemeType } from '@iobroker/gui-components';
 
 import '@xterm/xterm/css/xterm.css';
 import type { GUIResponseTerminal } from '../types';

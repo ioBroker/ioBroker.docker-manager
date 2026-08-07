@@ -3,7 +3,7 @@ import React from 'react';
 
 import { AppBar, Tooltip, Tabs, Tab } from '@mui/material';
 import { SignalCellularOff as IconNotAlive } from '@mui/icons-material';
-import { IconButton as IconButton76 } from '@foxriver76/iob-component-lib';
+import IconButton76 from './Components/IconButton';
 
 import {
     AdminConnection,
@@ -13,7 +13,7 @@ import {
     type GenericAppProps,
     type GenericAppState,
     type IobTheme,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 
 import enLang from './i18n/en.json';
 import deLang from './i18n/de.json';
@@ -126,11 +126,7 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
 
         let selectedTab =
             (window.localStorage.getItem(`${this.adapterName}.${this.instance}.selectedTab`) as
-                | 'info'
-                | 'images'
-                | 'options'
-                | 'containers'
-                | 'networks') || 'info';
+                'info' | 'images' | 'options' | 'containers' | 'networks') || 'info';
         if (this.isTab && selectedTab === 'options') {
             selectedTab = 'info';
         }
@@ -224,7 +220,7 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
     onExecuteCommand = (
         containerId: string,
         command: string,
-        cb: ((data: { stderr: string; stdout: string; code?: number }) => void) | null,
+        cb: ((data: { stderr: string; stdout: string; code?: number | null }) => void) | null,
     ): void => {
         if (!cb) {
             if (this.commandCallbacks[containerId]) {
