@@ -38,7 +38,7 @@
     "@iobroker/types": "^7.2.2",
     "@tsconfig/node22": "^22.0.5",
     "@types/dockerode": "^4.0.1",
-    "@types/node": "^22.20.1",
+    "@types/node": "^26.1.2",
     "@types/tar-fs": "^2.0.4",
     "tsx": "^4.20.6",
     "typescript": "~6.0.3"
