@@ -7,7 +7,7 @@
         "@emotion/react": "^11.14.0",
         "@iobroker/gui-components": "^10.0.14",
         "@iobroker/type-detector": "^5.0.15",
-        "@iobroker/plugin-docker": "^1.0.3",
+        "@iobroker/plugin-docker": "^1.2.1",
         "@mui/icons-material": "^9.3.1",
         "@mui/material": "^9.3.1",
         "@types/react": "^19.2.18",
