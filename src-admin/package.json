@@ -9,7 +9,7 @@
         "@iobroker/type-detector": "^5.0.15",
         "@iobroker/plugin-docker": "^1.0.3",
         "@mui/icons-material": "^9.3.1",
-        "@mui/material": "^9.3.1",
+        "@mui/material": "^9.4.0",
         "@types/react": "^19.2.18",
         "@types/react-dom": "^19.2.4",
         "@vitejs/plugin-react": "^6.0.5",
