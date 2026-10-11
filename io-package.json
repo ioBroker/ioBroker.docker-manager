@@ -3,19 +3,6 @@
     "name": "docker-manager",
     "version": "1.0.2",
     "news": {
-      "1.0.2": {
-        "en": "Log output is formatted and colorized",
-        "de": "Log-Ausgabe ist farbig und formatiert",
-        "ru": "Вывод журнала отформатирован и окрашен",
-        "pt": "A saída do log é formatada e colorida",
-        "nl": "De uitvoer van het logboek is geformatteerd en ingekleurd",
-        "fr": "La sortie du log est formatée et colorisée",
-        "it": "L'output del log è formattato e colorato",
-        "es": "La salida log tiene formato y color",
-        "pl": "Wyjście dziennika jest sformatowane i kolorowane",
-        "uk": "Вихідні дані журналу відформатовані та забарвлені",
-        "zh-cn": "日志输出经过格式化和彩色处理"
-      },
       "1.0.1": {
         "en": "Added an interactive terminal for running containers (xterm.js)\nUpdated GUI to React 19\nAdded better JSON viewer for container configuration\nBreaking: Node.js 22 is minimum requirement now",
         "de": "Hinzufügen eines interaktiven Terminals zum Ausführen von Containern (xterm.js)\nAktualisierte GUI zu React 19\nBesserer JSON Viewer für Containerkonfiguration hinzugefügt\nBreaking: Node.js 22 ist jetzt Mindestanforderung",
