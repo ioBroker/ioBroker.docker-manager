@@ -164,5 +164,8 @@
     "Group": "Gruppo",
     "Expand all": "Espandi tutto",
     "Container information": "Informazioni sul container",
-    "Copy to clipboard": "Copia negli appunti"
+    "Copy to clipboard": "Copia negli appunti",
+    "Copied to clipboard": "Copiato negli appunti",
+    "Maximize": "Ingrandisci",
+    "Restore size": "Ripristina dimensioni"
 }

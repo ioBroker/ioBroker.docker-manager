@@ -164,5 +164,8 @@
     "Group": "Grupa",
     "Expand all": "Rozwiń wszystko",
     "Container information": "Informacje o kontenerze",
-    "Copy to clipboard": "Kopiuj do schowka"
+    "Copy to clipboard": "Kopiuj do schowka",
+    "Copied to clipboard": "Skopiowano do schowka",
+    "Maximize": "Maksymalizuj",
+    "Restore size": "Przywróć rozmiar"
 }

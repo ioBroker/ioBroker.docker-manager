@@ -92,7 +92,7 @@ The adapter could use the Docker API to communicate with the Docker daemon on ot
 -->
 
 ## Changelog
-### 1.0.3 (2026-10-11)
+### **WORK IN PROGRESS**
 
 - (@GermanBluefox) Log output is formatted and colorized
 

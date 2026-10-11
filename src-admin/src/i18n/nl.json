@@ -164,5 +164,8 @@
     "Group": "Groep",
     "Expand all": "Alles uitklappen",
     "Container information": "Containerinformatie",
-    "Copy to clipboard": "Kopiëren naar klembord"
+    "Copy to clipboard": "Kopiëren naar klembord",
+    "Copied to clipboard": "Gekopieerd naar klembord",
+    "Maximize": "Maximaliseren",
+    "Restore size": "Grootte herstellen"
 }

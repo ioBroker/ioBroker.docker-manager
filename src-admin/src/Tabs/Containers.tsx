@@ -33,6 +33,9 @@ import {
     Pause,
     Warning as AlertIcon,
     Close as CloseIcon,
+    ContentCopy as CopyIcon,
+    Fullscreen as FullscreenIcon,
+    FullscreenExit as FullscreenExitIcon,
     Info as InfoIcon,
     ReceiptLong as LogsIcon,
     TextRotationNone as ExecuteIcon,
@@ -48,7 +51,7 @@ import type {
 } from '@iobroker/plugin-docker';
 import CreateContainerDialog from '../Components/CreateContainer';
 import ContainerTerminal from '../Components/ContainerTerminal';
-import AnsiText from '../Components/AnsiText';
+import AnsiText, { stripAnsi } from '../Components/AnsiText';
 import JsonViewer from '../Components/JsonViewer';
 import { mapInspectToConfig } from '../Components/utils';
 import type { GUIResponseTerminal } from '../types';
@@ -83,6 +86,8 @@ interface ContainersTabState {
     showAddComposeDialog: boolean;
     addCompose: string;
     logs: string[] | null;
+    /** Show the logs dialog over the whole screen. Remembered in localStorage */
+    logsFullScreen: boolean;
     showDeleteDialog: string; // image name
     showPruneDialog: boolean;
     addImage: ContainerConfig | null;
@@ -112,6 +117,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
         super(props);
         this.state = {
             logs: null,
+            logsFullScreen: window.localStorage.getItem('logsFullScreen') === 'true',
             showAddDialog: false,
             showDeleteDialog: '',
             addCompose: '',
@@ -920,19 +926,48 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
             return null;
         }
 
+        const logs = this.state.logs;
+
         return (
             <Dialog
                 open={!0}
                 onClose={() => this.setState({ logs: null })}
                 maxWidth="md"
                 fullWidth
+                fullScreen={this.state.logsFullScreen}
             >
-                <DialogTitle>{I18n.t('Container logs')}</DialogTitle>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <span style={{ flexGrow: 1 }}>{I18n.t('Container logs')}</span>
+                    <Tooltip title={I18n.t('Copy to clipboard')}>
+                        <IconButton
+                            onClick={() =>
+                                navigator.clipboard
+                                    .writeText(stripAnsi(logs))
+                                    .then(() => this.setState({ showHint: I18n.t('Copied to clipboard') }))
+                                    .catch(error => console.error(error))
+                            }
+                        >
+                            <CopyIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title={I18n.t(this.state.logsFullScreen ? 'Restore size' : 'Maximize')}>
+                        <IconButton
+                            onClick={() => {
+                                const logsFullScreen = !this.state.logsFullScreen;
+                                window.localStorage.setItem('logsFullScreen', logsFullScreen ? 'true' : 'false');
+                                this.setState({ logsFullScreen });
+                            }}
+                        >
+                            {this.state.logsFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+                        </IconButton>
+                    </Tooltip>
+                </DialogTitle>
                 <DialogContent style={{ display: 'flex', gap: 20, flexDirection: 'column' }}>
                     <AnsiText
                         scrollToEnd
-                        lines={this.state.logs}
+                        lines={logs}
                         themeType={this.props.themeType}
+                        style={{ flexGrow: 1 }}
                     />
                 </DialogContent>
                 <DialogActions>

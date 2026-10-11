@@ -164,5 +164,8 @@
     "Group": "Gruppe",
     "Expand all": "Alle ausklappen",
     "Container information": "Container-Informationen",
-    "Copy to clipboard": "In die Zwischenablage kopieren"
+    "Copy to clipboard": "In die Zwischenablage kopieren",
+    "Copied to clipboard": "In die Zwischenablage kopiert",
+    "Maximize": "Maximieren",
+    "Restore size": "Größe wiederherstellen"
 }

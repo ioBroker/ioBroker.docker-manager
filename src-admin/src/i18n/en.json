@@ -164,5 +164,8 @@
     "Group": "Group",
     "Expand all": "Expand all",
     "Container information": "Container information",
-    "Copy to clipboard": "Copy to clipboard"
+    "Copy to clipboard": "Copy to clipboard",
+    "Copied to clipboard": "Copied to clipboard",
+    "Maximize": "Maximize",
+    "Restore size": "Restore size"
 }

@@ -164,5 +164,8 @@
     "Group": "Група",
     "Expand all": "Розгорнути все",
     "Container information": "Інформація про контейнер",
-    "Copy to clipboard": "Копіювати в буфер обміну"
+    "Copy to clipboard": "Копіювати в буфер обміну",
+    "Copied to clipboard": "Скопійовано в буфер обміну",
+    "Maximize": "Розгорнути",
+    "Restore size": "Відновити розмір"
 }

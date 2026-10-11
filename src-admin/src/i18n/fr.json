@@ -164,5 +164,8 @@
     "Group": "Groupe",
     "Expand all": "Tout déplier",
     "Container information": "Informations sur le conteneur",
-    "Copy to clipboard": "Copier dans le presse-papiers"
+    "Copy to clipboard": "Copier dans le presse-papiers",
+    "Copied to clipboard": "Copié dans le presse-papiers",
+    "Maximize": "Agrandir",
+    "Restore size": "Restaurer la taille"
 }

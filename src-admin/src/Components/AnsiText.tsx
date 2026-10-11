@@ -224,6 +224,17 @@ function renderAnsi(lines: string[], themeType: ThemeType): React.ReactNode[] {
     return result;
 }
 
+/** Remove ANSI escape sequences and control characters, e.g. to copy the text to the clipboard */
+export function stripAnsi(lines: string[]): string {
+    return lines
+        .map(line => {
+            // Like in the rendering: a carriage return inside the line overwrites what was printed before
+            const parts = line.replace(/\r+$/, '').replace(ESCAPE_REGEX, '').split('\r');
+            return parts[parts.length - 1].replace(CONTROL_REGEX, '');
+        })
+        .join('\n');
+}
+
 interface AnsiTextProps {
     /** Text lines, may contain ANSI escape sequences */
     lines: string[];

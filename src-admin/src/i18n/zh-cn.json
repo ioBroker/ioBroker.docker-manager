@@ -164,5 +164,8 @@
     "Group": "组",
     "Expand all": "全部展开",
     "Container information": "容器信息",
-    "Copy to clipboard": "复制到剪贴板"
+    "Copy to clipboard": "复制到剪贴板",
+    "Copied to clipboard": "已复制到剪贴板",
+    "Maximize": "最大化",
+    "Restore size": "恢复大小"
 }
