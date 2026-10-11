@@ -48,6 +48,7 @@ import type {
 } from '@iobroker/plugin-docker';
 import CreateContainerDialog from '../Components/CreateContainer';
 import ContainerTerminal from '../Components/ContainerTerminal';
+import AnsiText from '../Components/AnsiText';
 import JsonViewer from '../Components/JsonViewer';
 import { mapInspectToConfig } from '../Components/utils';
 import type { GUIResponseTerminal } from '../types';
@@ -928,7 +929,11 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
             >
                 <DialogTitle>{I18n.t('Container logs')}</DialogTitle>
                 <DialogContent style={{ display: 'flex', gap: 20, flexDirection: 'column' }}>
-                    <pre>{this.state.logs.join('\n')}</pre>
+                    <AnsiText
+                        scrollToEnd
+                        lines={this.state.logs}
+                        themeType={this.props.themeType}
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button

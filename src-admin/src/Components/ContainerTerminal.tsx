@@ -8,7 +8,7 @@ import type { ThemeType } from '@iobroker/gui-components';
 import '@xterm/xterm/css/xterm.css';
 import type { GUIResponseTerminal } from '../types';
 
-const DARK_THEME: ITheme = {
+export const DARK_THEME: ITheme = {
     background: '#1e1e1e',
     foreground: '#d4d4d4',
     cursor: '#d4d4d4',
@@ -32,7 +32,7 @@ const DARK_THEME: ITheme = {
     brightWhite: '#ffffff',
 };
 
-const LIGHT_THEME: ITheme = {
+export const LIGHT_THEME: ITheme = {
     background: '#ffffff',
     foreground: '#333333',
     cursor: '#333333',
