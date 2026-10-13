@@ -92,6 +92,14 @@ The adapter could use the Docker API to communicate with the Docker daemon on ot
 -->
 
 ## Changelog
+<!--
+	Placeholder for the next version (at the beginning of the line):
+	### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
+
+- (@GermanBluefox) Cancel button and dialog closing are disabled while a request (pull, delete, prune, stop, restart) is running
+
 ### 1.0.4 (2026-10-11)
 
 - (@GermanBluefox) Log output is formatted and colorized

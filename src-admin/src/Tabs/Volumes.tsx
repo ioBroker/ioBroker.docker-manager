@@ -96,7 +96,7 @@ export default class VolumesTab extends Component<VolumesTabProps, VolumesTabSta
                         overflow: 'visible',
                     },
                 }}
-                onClose={() => this.setState({ showAddDialog: false })}
+                onClose={() => !this.state.requesting && this.setState({ showAddDialog: false })}
             >
                 <DialogTitle>{I18n.t('Create new volume')}</DialogTitle>
                 <DialogContent>
@@ -182,6 +182,7 @@ export default class VolumesTab extends Component<VolumesTabProps, VolumesTabSta
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showAddDialog: false })}
                         startIcon={<CloseIcon />}
                     >
@@ -200,7 +201,7 @@ export default class VolumesTab extends Component<VolumesTabProps, VolumesTabSta
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showDeleteDialog: '' })}
+                onClose={() => !this.state.requesting && this.setState({ showDeleteDialog: '' })}
             >
                 <DialogTitle>{I18n.t('Remove volume')}</DialogTitle>
                 <DialogContent>
@@ -245,6 +246,7 @@ export default class VolumesTab extends Component<VolumesTabProps, VolumesTabSta
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showDeleteDialog: '' })}
                         startIcon={<CloseIcon />}
                     >
@@ -328,7 +330,7 @@ export default class VolumesTab extends Component<VolumesTabProps, VolumesTabSta
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showPruneDialog: false })}
+                onClose={() => !this.state.requesting && this.setState({ showPruneDialog: false })}
             >
                 <DialogTitle>{I18n.t('Prune unused volumes')}</DialogTitle>
                 <DialogContent>
@@ -373,6 +375,7 @@ export default class VolumesTab extends Component<VolumesTabProps, VolumesTabSta
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showPruneDialog: false })}
                         startIcon={<CloseIcon />}
                     >

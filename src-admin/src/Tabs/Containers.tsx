@@ -240,7 +240,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showAddComposeDialog: false })}
+                onClose={() => !this.state.requesting && this.setState({ showAddComposeDialog: false })}
                 maxWidth="md"
                 fullWidth
             >
@@ -303,6 +303,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showAddComposeDialog: false })}
                         startIcon={<CloseIcon />}
                     >
@@ -321,7 +322,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showDeleteDialog: '' })}
+                onClose={() => !this.state.requesting && this.setState({ showDeleteDialog: '' })}
             >
                 <DialogTitle>{I18n.t('Delete container')}</DialogTitle>
                 <DialogContent>
@@ -366,6 +367,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showDeleteDialog: '' })}
                         startIcon={<CloseIcon />}
                     >
@@ -384,7 +386,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showPruneDialog: false })}
+                onClose={() => !this.state.requesting && this.setState({ showPruneDialog: false })}
             >
                 <DialogTitle>{I18n.t('Prune unused containers')}</DialogTitle>
                 <DialogContent>
@@ -429,6 +431,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showPruneDialog: false })}
                         startIcon={<CloseIcon />}
                     >
@@ -447,7 +450,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showStopDialog: '' })}
+                onClose={() => !this.state.requesting && this.setState({ showStopDialog: '' })}
             >
                 <DialogTitle>{I18n.t('Stop container')}</DialogTitle>
                 <DialogContent>
@@ -470,6 +473,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showStopDialog: '' })}
                         startIcon={<CloseIcon />}
                     >
@@ -488,7 +492,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showRestartDialog: '' })}
+                onClose={() => !this.state.requesting && this.setState({ showRestartDialog: '' })}
             >
                 <DialogTitle>{I18n.t('Restart container')}</DialogTitle>
                 <DialogContent>
@@ -530,6 +534,7 @@ export default class ContainersTab extends Component<ContainersTabProps, Contain
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showRestartDialog: '' })}
                         startIcon={<CloseIcon />}
                     >

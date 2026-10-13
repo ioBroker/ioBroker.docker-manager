@@ -76,7 +76,7 @@ export default class NetworksTab extends Component<NetworksTabProps, NetworksTab
                         overflow: 'visible',
                     },
                 }}
-                onClose={() => this.setState({ showAddDialog: false })}
+                onClose={() => !this.state.requesting && this.setState({ showAddDialog: false })}
             >
                 <DialogTitle>{I18n.t('Create new network')}</DialogTitle>
                 <DialogContent>
@@ -149,6 +149,7 @@ export default class NetworksTab extends Component<NetworksTabProps, NetworksTab
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showAddDialog: false })}
                         startIcon={<CloseIcon />}
                     >
@@ -167,7 +168,7 @@ export default class NetworksTab extends Component<NetworksTabProps, NetworksTab
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showDeleteDialog: '' })}
+                onClose={() => !this.state.requesting && this.setState({ showDeleteDialog: '' })}
             >
                 <DialogTitle>{I18n.t('Remove network')}</DialogTitle>
                 <DialogContent>
@@ -212,6 +213,7 @@ export default class NetworksTab extends Component<NetworksTabProps, NetworksTab
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showDeleteDialog: '' })}
                         startIcon={<CloseIcon />}
                     >
@@ -295,7 +297,7 @@ export default class NetworksTab extends Component<NetworksTabProps, NetworksTab
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ showPruneDialog: false })}
+                onClose={() => !this.state.requesting && this.setState({ showPruneDialog: false })}
             >
                 <DialogTitle>{I18n.t('Prune unused networks')}</DialogTitle>
                 <DialogContent>
@@ -340,6 +342,7 @@ export default class NetworksTab extends Component<NetworksTabProps, NetworksTab
                     <Button
                         variant="contained"
                         color="grey"
+                        disabled={this.state.requesting}
                         onClick={() => this.setState({ showPruneDialog: false })}
                         startIcon={<CloseIcon />}
                     >
