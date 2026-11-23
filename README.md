@@ -96,6 +96,11 @@ The adapter could use the Docker API to communicate with the Docker daemon on ot
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- (@GermanBluefox) Fixed adapter crash when showing image information on Docker Engine 29+ (containerd image store)
+- (@GermanBluefox) A failing command no longer terminates the adapter
+
 ### 1.0.5 (2026-10-13)
 
 - (@GermanBluefox) Cancel button and dialog closing are disabled while a request (pull, delete, prune, stop, restart) is running

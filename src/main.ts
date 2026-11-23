@@ -36,7 +36,7 @@ export class DockerManagerAdapter extends Adapter {
         });
         this.on('ready', () => this.#onReady());
         this.on('unload', callback => this.#onUnload(callback));
-        this.on('message', this.#onMessage.bind(this));
+        this.on('message', obj => this.#onMessageSafe(obj));
     }
 
     async scanRequests(): Promise<void> {
@@ -226,6 +226,22 @@ export class DockerManagerAdapter extends Adapter {
             throw new Error(`Cannot get tags for image ${image}: ${response.statusText}`);
         }
         return response.data.results;
+    }
+
+    /**
+     * A failing command must never take the whole adapter down (an unhandled rejection terminates it),
+     * so every error is logged and answered to the caller instead.
+     */
+    async #onMessageSafe(obj: ioBroker.Message): Promise<void> {
+        try {
+            await this.#onMessage(obj);
+        } catch (e) {
+            const error = (e as Error)?.message || String(e);
+            this.log.error(`Cannot process command "${obj.command}": ${error}`);
+            if (obj.callback) {
+                this.sendTo(obj.from, obj.command, { error }, obj.callback);
+            }
+        }
     }
 
     async #onMessage(obj: ioBroker.Message): Promise<void> {

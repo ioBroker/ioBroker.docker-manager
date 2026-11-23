@@ -11,6 +11,7 @@ import type { Duplex } from 'node:stream';
 import {
     type ContainerConfig,
     type ContainerInfo,
+    type DockerImageInspect,
     type ImageInfo,
     type NetworkDriver,
     type NetworkInfo,
@@ -158,6 +159,32 @@ export default class DockerMonitor extends DockerManager {
             });
         }
         return result;
+    }
+
+    async imageInspect(imageId: ImageName): Promise<DockerImageInspect | null> {
+        try {
+            return await super.imageInspect(imageId);
+        } catch (e) {
+            // Docker Engine 29+ with the containerd image store omits `GraphDriver` from the image inspect
+            // response, but the base class dereferences `GraphDriver.Data` unconditionally and throws.
+            // Inspect the image here and fill in the missing parts before converting it.
+            const docker = await this.#getDockerodeForExec();
+            if (!docker) {
+                this.#adapter.log.warn(`Cannot inspect image ${imageId}: ${e.message}`);
+                return null;
+            }
+            try {
+                const data = await docker.getImage(imageId).inspect();
+                return DockerManager.rodeInspect2DockerImageInspect({
+                    ...data,
+                    GraphDriver: data.GraphDriver ?? { Name: '', Data: {} },
+                    Config: data.Config ?? {},
+                });
+            } catch (err) {
+                this.#adapter.log.warn(`Cannot inspect image ${imageId}: ${err.message}`);
+                return null;
+            }
+        }
     }
 
     async containerRun(config: ContainerConfig): Promise<{ stdout: string; stderr: string }> {
