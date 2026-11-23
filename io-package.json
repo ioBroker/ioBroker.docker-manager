@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "docker-manager",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "news": {
+      "1.0.6": {
+        "en": "Fixed adapter crash when showing image information on Docker Engine 29+ (containerd image store)\nA failing command no longer terminates the adapter",
+        "de": "Adapterabsturz beim Anzeigen von Bilddaten auf Docker Engine 29+ (Containerd Image Store) behoben\nEin Fehlbefehl beendet den Adapter nicht mehr",
+        "ru": "Исправлен сбой адаптера при отображении информации об изображении в Docker Engine 29+ (хранилище изображений containerd)\nНеудачная команда больше не завершает работу адаптера",
+        "pt": "Corrigida a falha do adaptador ao mostrar imagens no Docker Engine 29+\nUm comando com falha não encerra mais o adaptador",
+        "nl": "Adapter crashte bij weergave van beeldinformatie op Docker Engine 29+ (container image store) opgelost\nEen mislukte opdracht beëindigt de adapter niet langer",
+        "fr": "Correction d'un crash de l'adaptateur lors de l'affichage des images sur Docker Engine 29+ (Containerd Image Store)\nUne commande défaillante ne met plus fin à l'adaptateur",
+        "it": "Risolto il crash dell'adattatore che mostrava le immagini su Docker Engine 29+\nUn comando errato non chiude più l'adattatore",
+        "es": "Se ha corregido un fallo del adaptador al mostrar la información de imagen en Docker Engine 29+ (almacén de imágenes)\nUn comando fallido ya no termina el adaptador",
+        "pl": "Naprawiono awarię adaptera podczas wyświetlania informacji o obrazie w Docker Engine 29+ (magazyn obrazów kontenerowych)\nNieudane polecenie nie kończy już adaptera",
+        "uk": "Виправлена помилка адаптера при відображенні інформації про зображення на Docker Engine 29+ (контейнерне сховище зображень)\nНевдала команда більше не припиняє роботу адаптера",
+        "zh-cn": "修复了在 Docker 引擎 29+（容器镜像存储）上显示图像信息时适配器崩溃的问题\n失败的命令不会再终止适配器"
+      },
       "1.0.5": {
         "en": "Cancel button and dialog closing are disabled while a request (pull, delete, prune, stop, restart) is running",
         "de": "Abbrechen und Dialog werden bei laufender Anfrage (Pull, Delete, Prune, Stop, Restart) deaktiviert",

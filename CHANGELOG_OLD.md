@@ -1,4 +1,8 @@
 # Older changes
+## 0.1.3 (2025-10-15)
+
+- (@GermanBluefox) Updated packages
+
 ## 0.1.2 (2025-10-09)
 
 - (@GermanBluefox) Added volume browsing
